@@ -1,0 +1,104 @@
+class ApiKeyCard extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.render();
+    }
+
+    static get observedAttributes() {
+        return ['key-value', 'last-used', 'status'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.render();
+        }
+    }
+
+    render() {
+        const keyValue = this.getAttribute('key-value') || '';
+        const lastUsed = this.getAttribute('last-used') || 'Never';
+        const status = this.getAttribute('status') || 'active';
+
+        this.shadowRoot.innerHTML = `
+            <style>
+                .card {
+                    background: white;
+                    border-radius: 0.5rem;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    padding: 1rem;
+                    margin-bottom: 0.75rem;
+                    border-left: 4px solid;
+                }
+                
+                .active {
+                    border-left-color: #10b981;
+                }
+                
+                .inactive {
+                    border-left-color: #ef4444;
+                }
+                
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 0.5rem;
+                }
+                
+                .key-preview {
+                    font-family: monospace;
+                    color: #6b7280;
+                }
+                
+                .status {
+                    display: inline-flex;
+                    align-items: center;
+                    font-size: 0.75rem;
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 9999px;
+                }
+                
+                .status-active {
+                    background-color: #ecfdf5;
+                    color: #059669;
+                }
+                
+                .status-inactive {
+                    background-color: #fee2e2;
+                    color: #dc2626;
+                }
+                
+                .footer {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top: 0.5rem;
+                    font-size: 0.75rem;
+                    color: #6b7280;
+                }
+                
+                .actions {
+                    display: flex;
+                    gap: 0.5rem;
+                }
+                
+                button {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: #6b7280;
+                }
+                
+                button:hover {
+                    color: #4b5563;
+                }
+            </style>
+            
+            <div class="card ${status}">
+                <div class="header">
+                    <div class="key-preview">${keyValue.substring(0, 8)}••••••••${keyValue.substring(keyValue.length - 4)}</div>
+                    <span class="status status-${status}">
+                        ${status === 'active' ? 'Active' : 'Inactive'}
+                    </span>
+                </div>
